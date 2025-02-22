@@ -55,17 +55,21 @@ export const ContractCreation: React.FC<ContractCreationProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Target BTC Price (USD)
           </label>
-          <input
-            type="text"
-            value={targetPrice}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === "" || !isNaN(Number(value))) {
-                setTargetPrice(Number(value)); 
-              }
-            }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
+          <div>
+            <input
+              type="number"
+              value={targetPrice}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || !isNaN(Number(value))) {
+                  const newValue = parseFloat(value).toFixed(2);
+                  setTargetPrice(Number(newValue));
+                }
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              step="0.01" // Permite até 2 casas decimais
+            />
+          </div>
         </div>
 
         <div>

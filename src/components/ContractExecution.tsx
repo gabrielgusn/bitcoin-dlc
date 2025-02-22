@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trophy, AlertTriangle } from 'lucide-react';
 import { DLCContract } from '../types';
 import { format } from 'date-fns';
@@ -12,6 +12,7 @@ export const ContractExecution: React.FC<ContractExecutionProps> = ({
   contract,
   onExecute,
 }) => {
+  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
   const isExpired = new Date() > new Date(contract.expiresAt);
   const canExecute = contract.status === 'active' && 
     contract.transaction?.status === 'confirmed' &&
@@ -43,6 +44,27 @@ export const ContractExecution: React.FC<ContractExecutionProps> = ({
     );
   };
 
+  const fetchCurrentPrice = async () => {
+    try {
+      const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+      const data = await response.json();
+      setCurrentPrice(parseFloat(data.price));
+    } catch (error) {
+      console.error('Error fetching current price:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch initial price
+    fetchCurrentPrice();
+
+    // Set interval to fetch the price every 5 seconds
+    const intervalId = setInterval(fetchCurrentPrice, 5000);
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className="bg-white rounded-lg p-4 border border-gray-200">
       <h3 className="text-lg font-semibold mb-4">Contract Execution</h3>
@@ -51,7 +73,9 @@ export const ContractExecution: React.FC<ContractExecutionProps> = ({
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-gray-500">Current Price</p>
-            <p className="font-medium">${contract.currentPrice}</p>
+            <p className="font-medium">
+              {currentPrice ? `$${currentPrice.toFixed(2)}` : 'Loading...'}
+            </p>
           </div>
           <div>
             <p className="text-gray-500">Target Price</p>
