@@ -31,7 +31,7 @@ export const PSBTQRCode: React.FC<PSBTQRCodeProps> = ({ psbt, onClose }) => {
           
           <div className="w-full">
             <p className="text-sm text-gray-600 mb-2">PSBT Data:</p>
-            <div className="bg-gray-100 p-3 rounded-lg">
+            <div className="bg-gray-100 p-3 rounded-lg max-h-[10rem] overflow-y-scroll">
               <p className="text-xs font-mono break-all">{psbt}</p>
             </div>
           </div>
