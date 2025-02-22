@@ -1,14 +1,33 @@
-import React, { useState } from 'react';
-import { Bitcoin } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Bitcoin } from "lucide-react";
 
 interface ContractCreationProps {
   onCreateContract: (contract: any) => void;
 }
 
-export const ContractCreation: React.FC<ContractCreationProps> = ({ onCreateContract }) => {
-  const [targetPrice, setTargetPrice] = useState<number>(30000);
+export const ContractCreation: React.FC<ContractCreationProps> = ({
+  onCreateContract,
+}) => {
+  const [targetPrice, setTargetPrice] = useState<number>(0);
   const [collateral, setCollateral] = useState<number>(0.1);
   const [duration, setDuration] = useState<number>(24);
+
+  useEffect(() => {
+    const fetchBitcoinPrice = async () => {
+      try {
+        const response = await fetch(
+          "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
+        );
+        const data = await response.json();
+        setTargetPrice(parseFloat(data.price));
+      } catch (error) {
+        console.error("Error fetching Bitcoin price:", error);
+        // Mantém o valor padrão de 30000 em caso de erro
+      }
+    };
+
+    fetchBitcoinPrice();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,10 +42,12 @@ export const ContractCreation: React.FC<ContractCreationProps> = ({ onCreateCont
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
+    <div className="bg-white rounded-xl shadow-lg p-6 w-full">
       <div className="flex items-center gap-3 mb-6">
         <Bitcoin className="w-8 h-8 text-orange-500" />
-        <h2 className="text-2xl font-bold text-gray-800">Create DLC Contract</h2>
+        <h2 className="text-2xl font-bold text-gray-800">
+          Create DLC Contract
+        </h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -35,12 +56,15 @@ export const ContractCreation: React.FC<ContractCreationProps> = ({ onCreateCont
             Target BTC Price (USD)
           </label>
           <input
-            type="number"
+            type="text"
             value={targetPrice}
-            onChange={(e) => setTargetPrice(Number(e.target.value))}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "" || !isNaN(Number(value))) {
+                setTargetPrice(Number(value)); 
+              }
+            }}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-            min="0"
-            step="100"
           />
         </div>
 

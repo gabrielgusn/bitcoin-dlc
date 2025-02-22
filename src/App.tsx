@@ -178,7 +178,7 @@ function App() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Bitcoin className="w-8 h-8 text-orange-500" />
-              <h1 className="text-2xl font-bold text-gray-900">Bitcoin DLC Demo</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Bitcoin DLC</h1>
             </div>
             <div className="flex items-center space-x-2">
               <Users className="w-5 h-5 text-gray-500" />
